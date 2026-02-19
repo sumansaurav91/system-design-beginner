@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design – Beginner Level (Q1–30)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --border: #E2E0DC;
+    --text: #1A1A1A;
+    --text-secondary: #5A5A5A;
+    --accent: #2563EB;
+    --accent-light: #EFF6FF;
+    --accent-dark: #1E40AF;
+    --green: #059669;
+    --green-light: #ECFDF5;
+    --orange: #D97706;
+    --orange-light: #FFFBEB;
+    --red: #DC2626;
+    --red-light: #FEF2F2;
+    --purple: #7C3AED;
+    --purple-light: #F5F3FF;
+    --diagram-bg: #F8FAFC;
+    --code-bg: #F1F5F9;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .header-banner {
+    background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 50%, #3B82F6 100%);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .header-banner h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header-banner .subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.15rem;
+    opacity: 0.85;
+    font-weight: 400;
+    position: relative;
+  }
+  .header-banner .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 48px;
+    box-shadow: var(--shadow);
+  }
+  .toc h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    color: var(--accent-dark);
+  }
+  .toc ol {
+    columns: 2;
+    column-gap: 32px;
+    padding-left: 20px;
+  }
+  .toc li {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    break-inside: avoid;
+    padding: 2px 0;
+  }
+  .toc li a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .toc li a:hover { color: var(--accent); }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 36px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s;
+  }
+  .question-card:hover { box-shadow: var(--shadow-md); }
+
+  .q-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .q-number {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--accent);
+    color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .q-body { padding: 28px 32px; }
+  .q-body p { margin-bottom: 16px; }
+  .q-body p:last-child { margin-bottom: 0; }
+
+  .diagram-box {
+    background: var(--diagram-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .diagram-box .mermaid {
+    display: flex;
+    justify-content: center;
+  }
+  .diagram-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .diagram-label::before {
+    content: '◆';
+    font-size: 0.6rem;
+    color: var(--accent);
+  }
+
+  .key-point {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 0.95rem;
+  }
+  .key-point strong {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--accent-dark);
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .comp-box {
+    border-radius: 10px;
+    padding: 18px;
+    border: 1px solid var(--border);
+  }
+  .comp-box h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  .comp-box ul {
+    padding-left: 18px;
+    font-size: 0.92rem;
+  }
+  .comp-box li { margin-bottom: 4px; }
+  .comp-green { background: var(--green-light); }
+  .comp-green h4 { color: var(--green); }
+  .comp-orange { background: var(--orange-light); }
+  .comp-orange h4 { color: var(--orange); }
+  .comp-blue { background: var(--accent-light); }
+  .comp-blue h4 { color: var(--accent-dark); }
+  .comp-purple { background: var(--purple-light); }
+  .comp-purple h4 { color: var(--purple); }
+  .comp-red { background: var(--red-light); }
+  .comp-red h4 { color: var(--red); }
+
+  .latency-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .latency-table th, .latency-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .latency-table th {
+    background: var(--accent-light);
+    font-weight: 600;
+    color: var(--accent-dark);
+  }
+  .latency-table code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 700px) {
+    .header-banner { padding: 40px 20px; }
+    .header-banner h1 { font-size: 1.8rem; }
+    .container { padding: 20px 12px 60px; }
+    .q-header { padding: 18px 20px; }
+    .q-body { padding: 20px; }
+    .diagram-box { padding: 16px; }
+    .toc ol { columns: 1; }
+    .comparison-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <div class="badge">PART 1 OF 4</div>
+  <h1>System Design Interview Guide</h1>
+  <div class="subtitle">Beginner Level — Questions 1 through 30 · Foundational Concepts & Building Blocks</div>
+</div>
+
+<div class="container">
+
+<div class="toc">
+  <h2>📑 Table of Contents</h2>
+  <ol>
+    <li><a href="#q1">What is System Design?</a></li>
+    <li><a href="#q2">Vertical vs. Horizontal Scaling</a></li>
+    <li><a href="#q3">Load Balancer</a></li>
+    <li><a href="#q4">Caching</a></li>
+    <li><a href="#q5">Content Delivery Network (CDN)</a></li>
+    <li><a href="#q6">Database Index</a></li>
+    <li><a href="#q7">SQL vs. NoSQL Databases</a></li>
+    <li><a href="#q8">The CAP Theorem</a></li>
+    <li><a href="#q9">Database Sharding</a></li>
+    <li><a href="#q10">API Gateway</a></li>
+    <li><a href="#q11">Microservices vs. Monolith</a></li>
+    <li><a href="#q12">Message Queues</a></li>
+    <li><a href="#q13">REST APIs</a></li>
+    <li><a href="#q14">Reverse Proxy</a></li>
+    <li><a href="#q15">Database Replication</a></li>
+    <li><a href="#q16">Types of Proxies</a></li>
+    <li><a href="#q17">Latency vs. Throughput</a></li>
+    <li><a href="#q18">Consistent Hashing</a></li>
+    <li><a href="#q19">Single Point of Failure</a></li>
+    <li><a href="#q20">TCP vs. UDP</a></li>
+    <li><a href="#q21">DNS (Domain Name System)</a></li>
+    <li><a href="#q22">WebSockets</a></li>
+    <li><a href="#q23">Data Partitioning</a></li>
+    <li><a href="#q24">Rate Limiter</a></li>
+    <li><a href="#q25">ACID Properties</a></li>
+    <li><a href="#q26">Synchronous vs. Asynchronous</a></li>
+    <li><a href="#q27">Blob Store</a></li>
+    <li><a href="#q28">Process vs. Thread</a></li>
+    <li><a href="#q29">Idempotent Operations</a></li>
+    <li><a href="#q30">Data Lake vs. Data Warehouse</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q1 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q1">
+  <div class="q-header">
+    <div class="q-number">01</div>
+    <div class="q-title">What is System Design, and why is it important in software engineering interviews?</div>
+  </div>
+  <div class="q-body">
+    <p>System Design is the process of defining the <strong>architecture, components, modules, interfaces, and data flow</strong> of a system to satisfy specified requirements. In interviews, it evaluates your ability to think at scale, make trade-offs, and communicate architectural decisions clearly.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">System Design Interview Framework</div>
+      <div class="mermaid">
+flowchart LR
+  A["1️⃣ Requirements\nGathering"] --> B["2️⃣ Estimation\n& Constraints"]
+  B --> C["3️⃣ High-Level\nDesign"]
+  C --> D["4️⃣ Deep Dive\ninto Components"]
+  D --> E["5️⃣ Identify\nBottlenecks"]
+  E --> F["6️⃣ Wrap Up\n& Trade-offs"]
+  style A fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style B fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style C fill:#D1FAE5,stroke:#059669,color:#065F46
+  style D fill:#D1FAE5,stroke:#059669,color:#065F46
+  style E fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style F fill:#FEF3C7,stroke:#D97706,color:#92400E
+      </div>
+    </div>
+
+    <p>Interviewers look for <strong>structured thinking</strong>: gathering requirements, estimating scale, proposing a high-level architecture, then drilling into specific components. Strong candidates demonstrate awareness of trade-offs (e.g., consistency vs. availability), explain their reasoning, and adapt designs based on constraints.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">What Interviewers Evaluate</div>
+      <div class="mermaid">
+mindmap
+  root((System Design<br/>Skills))
+    Scalability
+      Horizontal scaling
+      Vertical scaling
+      Data partitioning
+    Reliability
+      Fault tolerance
+      Redundancy
+      Disaster recovery
+    Trade-offs
+      CAP theorem
+      Latency vs consistency
+      Cost vs performance
+    Communication
+      Structured approach
+      Whiteboard skills
+      Asking clarifying Qs
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> System design competence signals senior-level engineering maturity and is often the deciding factor for mid-to-senior roles. Unlike coding interviews that test algorithmic skill, system design assesses your ability to architect real-world products at scale.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q2 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q2">
+  <div class="q-header">
+    <div class="q-number">02</div>
+    <div class="q-title">Explain the difference between vertical scaling and horizontal scaling.</div>
+  </div>
+  <div class="q-body">
+    <p><strong>Vertical scaling (scaling up)</strong> means adding more power to a single machine—more CPU, RAM, or storage. <strong>Horizontal scaling (scaling out)</strong> means adding more machines and distributing the workload across them.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Vertical Scaling — Scaling Up</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph Before["Before"]
+    S1["🖥️ Server<br/>4 CPU · 8GB RAM"]
+  end
+  subgraph After["After Scaling Up"]
+    S2["🖥️ Server<br/>32 CPU · 256GB RAM<br/>⬆️ Bigger machine"]
+  end
+  Before --> |"Add more resources"| After
+  style S1 fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style S2 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Horizontal Scaling — Scaling Out</div>
+      <div class="mermaid">
+flowchart TB
+  LB["⚖️ Load Balancer"]
+  LB --> S1["🖥️ Server 1"]
+  LB --> S2["🖥️ Server 2"]
+  LB --> S3["🖥️ Server 3"]
+  LB --> S4["🖥️ Server 4"]
+  style LB fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style S1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S3 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S4 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comp-box comp-green">
+        <h4>✅ Vertical Scaling Pros</h4>
+        <ul>
+          <li>Simple to implement</li>
+          <li>No code changes needed</li>
+          <li>No distributed complexity</li>
+          <li>Great for databases</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-red">
+        <h4>⚠️ Vertical Scaling Cons</h4>
+        <ul>
+          <li>Hardware limits (can't scale infinitely)</li>
+          <li>Single point of failure</li>
+          <li>Expensive at high end</li>
+          <li>May require downtime</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-green">
+        <h4>✅ Horizontal Scaling Pros</h4>
+        <ul>
+          <li>Near-linear scalability</li>
+          <li>Better fault tolerance</li>
+          <li>Cost-effective (commodity hardware)</li>
+          <li>No single machine limit</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-red">
+        <h4>⚠️ Horizontal Scaling Cons</h4>
+        <ul>
+          <li>Increased complexity</li>
+          <li>Needs load balancers</li>
+          <li>Data partitioning challenges</li>
+          <li>Distributed coordination</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> Most large-scale systems (Google, Netflix, Amazon) use horizontal scaling with commodity hardware. In practice, many systems use a <strong>hybrid approach</strong>—vertically scaling individual nodes while horizontally scaling the number of nodes.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q3 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q3">
+  <div class="q-header">
+    <div class="q-number">03</div>
+    <div class="q-title">What is a Load Balancer, and how does it work?</div>
+  </div>
+  <div class="q-body">
+    <p>A load balancer distributes incoming network traffic across multiple backend servers to ensure no single server is overwhelmed. It sits between clients and the server pool, acting as a reverse proxy.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Load Balancer Architecture</div>
+      <div class="mermaid">
+flowchart LR
+  C1["👤 Client 1"] --> LB
+  C2["👤 Client 2"] --> LB
+  C3["👤 Client 3"] --> LB
+  C4["👤 Client 4"] --> LB
+  LB["⚖️ Load Balancer<br/>Health Checks<br/>Algorithm Selection"]
+  LB --> S1["🖥️ Server 1<br/>✅ Healthy"]
+  LB --> S2["🖥️ Server 2<br/>✅ Healthy"]
+  LB --> S3["🖥️ Server 3<br/>❌ Unhealthy"]
+  LB --> S4["🖥️ Server 4<br/>✅ Healthy"]
+  style LB fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style S1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S3 fill:#FEE2E2,stroke:#DC2626,color:#991B1B
+  style S4 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Common Load Balancing Algorithms</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph RR["Round Robin"]
+    direction LR
+    r1["Req 1 → S1"] ~~~ r2["Req 2 → S2"] ~~~ r3["Req 3 → S3"] ~~~ r4["Req 4 → S1"]
+  end
+  subgraph LC["Least Connections"]
+    direction LR
+    l1["S1: 5 conn"] ~~~ l2["S2: 2 conn ✅"] ~~~ l3["S3: 8 conn"]
+  end
+  subgraph IP["IP Hash"]
+    direction LR
+    i1["Client IP<br/>hash(IP) % N"] ~~~ i2["Always same<br/>server 🔒"]
+  end
+  style RR fill:#EFF6FF,stroke:#2563EB
+  style LC fill:#ECFDF5,stroke:#059669
+  style IP fill:#FEF3C7,stroke:#D97706
+      </div>
+    </div>
+
+    <p>Load balancers can operate at <strong>Layer 4</strong> (transport — based on IP/port, faster) or <strong>Layer 7</strong> (application — based on HTTP headers, URLs, cookies, more flexible). They perform periodic <strong>health checks</strong> and remove unhealthy servers from the pool.</p>
+
+    <div class="key-point">
+      <strong>Popular implementations:</strong> NGINX, HAProxy, AWS ELB/ALB, Google Cloud Load Balancer. A well-designed system often has multiple layers of load balancing for redundancy.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q4 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q4">
+  <div class="q-header">
+    <div class="q-number">04</div>
+    <div class="q-title">What is Caching, and why is it used in system design?</div>
+  </div>
+  <div class="q-body">
+    <p>Caching stores copies of frequently accessed data in a faster storage layer so future requests are served more quickly. It exploits the principle of <strong>locality</strong>—recently accessed data is likely to be accessed again.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Multi-Level Caching Architecture</div>
+      <div class="mermaid">
+flowchart LR
+  U["👤 User"] --> BC["🌐 Browser\nCache"]
+  BC --> CDN["📡 CDN\nCache"]
+  CDN --> AC["⚡ App Cache\nRedis/Memcached"]
+  AC --> DB["🗄️ Database"]
+  
+  BC -.- |"~0ms"| t1[" "]
+  CDN -.- |"~10ms"| t2[" "]
+  AC -.- |"~1-5ms"| t3[" "]
+  DB -.- |"~50-200ms"| t4[" "]
+
+  style U fill:#F5F3FF,stroke:#7C3AED,color:#5B21B6
+  style BC fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style CDN fill:#D1FAE5,stroke:#059669,color:#065F46
+  style AC fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style DB fill:#FEE2E2,stroke:#DC2626,color:#991B1B
+  style t1 fill:none,stroke:none
+  style t2 fill:none,stroke:none
+  style t3 fill:none,stroke:none
+  style t4 fill:none,stroke:none
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Cache-Aside (Lazy Loading) Pattern</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant App as Application
+  participant Cache as Cache (Redis)
+  participant DB as Database
+  App->>Cache: 1. GET user:123
+  Cache-->>App: 2. Cache MISS ❌
+  App->>DB: 3. SELECT * FROM users WHERE id=123
+  DB-->>App: 4. Return user data
+  App->>Cache: 5. SET user:123 (with TTL)
+  Note over App,Cache: Next request → Cache HIT ✅
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Write-Through vs Write-Behind</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph WT["Write-Through"]
+    direction LR
+    a1["App writes"] --> a2["Cache"] --> a3["DB"]
+    a4["Synchronous ✅ Consistent"]
+  end
+  subgraph WB["Write-Behind (Write-Back)"]
+    direction LR
+    b1["App writes"] --> b2["Cache"] -.->|"Async"| b3["DB"]
+    b4["Fast ⚡ Risk of data loss"]
+  end
+  style WT fill:#ECFDF5,stroke:#059669
+  style WB fill:#FEF3C7,stroke:#D97706
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> A well-placed cache can reduce database load by <strong>80–90%</strong> and cut response times from hundreds of milliseconds to single-digit milliseconds. But remember: <em>cache invalidation</em> is one of the "two hard things in computer science."
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q5 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q5">
+  <div class="q-header">
+    <div class="q-number">05</div>
+    <div class="q-title">What is a Content Delivery Network (CDN), and when should you use one?</div>
+  </div>
+  <div class="q-body">
+    <p>A CDN is a geographically distributed network of proxy servers that cache and deliver content to users from the <strong>nearest edge location</strong>. This reduces latency, decreases origin server load, and improves availability.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">CDN Global Architecture</div>
+      <div class="mermaid">
+flowchart TB
+  Origin["🏢 Origin Server<br/>New York"]
+  
+  subgraph Edge["CDN Edge Locations"]
+    E1["📡 Edge - London<br/>EU Users"]
+    E2["📡 Edge - Tokyo<br/>Asia Users"]
+    E3["📡 Edge - Sydney<br/>AU Users"]
+    E4["📡 Edge - São Paulo<br/>SA Users"]
+  end
+
+  Origin --> E1
+  Origin --> E2
+  Origin --> E3
+  Origin --> E4
+
+  U1["👤 UK User"] --> E1
+  U2["👤 Japan User"] --> E2
+  U3["👤 AU User"] --> E3
+  
+  style Origin fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style E1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style E2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style E3 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style E4 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Push CDN vs Pull CDN</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph Push["Push CDN"]
+    direction TB
+    p1["Origin pushes content<br/>to edges proactively"]
+    p2["✅ Content always ready"]
+    p3["⚠️ More storage used"]
+  end
+  subgraph Pull["Pull CDN"]
+    direction TB
+    q1["Edge fetches from origin<br/>on first request"]
+    q2["✅ Only caches popular content"]
+    q3["⚠️ First request is slow (miss)"]
+  end
+  style Push fill:#ECFDF5,stroke:#059669
+  style Pull fill:#EFF6FF,stroke:#2563EB
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>When to use a CDN:</strong> When users are geographically distributed, you serve static content (images, CSS, JS, videos), you need DDoS protection, or you want to reduce bandwidth costs. CDNs typically reduce latency from <strong>200–500ms to 10–50ms</strong> for cached content.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q6 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q6">
+  <div class="q-header">
+    <div class="q-number">06</div>
+    <div class="q-title">What is a Database Index, and how does it improve performance?</div>
+  </div>
+  <div class="q-body">
+    <p>A database index is a data structure (typically a <strong>B-tree</strong>) that provides a fast lookup path to rows without scanning every row. Think of it like the index at the back of a book.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">B-Tree Index Structure</div>
+      <div class="mermaid">
+flowchart TB
+  Root["Root Node<br/>[30 | 60]"]
+  Root --> L1["[10 | 20]"]
+  Root --> L2["[40 | 50]"]
+  Root --> L3["[70 | 80]"]
+  
+  L1 --> D1["📄 rows 1-10"]
+  L1 --> D2["📄 rows 11-20"]
+  L1 --> D3["📄 rows 21-29"]
+  
+  L2 --> D4["📄 rows 31-40"]
+  L2 --> D5["📄 rows 41-50"]
+  L2 --> D6["📄 rows 51-59"]
+  
+  L3 --> D7["📄 rows 61-70"]
+  L3 --> D8["📄 rows 71-80"]
+  L3 --> D9["📄 rows 81+"]
+
+  style Root fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style L1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style L2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style L3 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">With Index vs Without Index</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph NO["❌ Without Index — Full Table Scan"]
+    direction LR
+    n1["Row 1"] --> n2["Row 2"] --> n3["Row 3"] --> n4["..."] --> n5["Row 10M"]
+    n6["O(n) = 10,000,000 checks"]
+  end
+  subgraph YES["✅ With B-Tree Index"]
+    direction LR
+    y1["Level 1"] --> y2["Level 2"] --> y3["Level 3"] --> y4["Row found!"]
+    y5["O(log n) ≈ 23 checks"]
+  end
+  style NO fill:#FEF2F2,stroke:#DC2626
+  style YES fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comp-box comp-green">
+        <h4>✅ Index Benefits</h4>
+        <ul>
+          <li>Dramatically speeds up SELECT/WHERE</li>
+          <li>Improves JOIN performance</li>
+          <li>Speeds up ORDER BY / GROUP BY</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-orange">
+        <h4>⚠️ Index Costs</h4>
+        <ul>
+          <li>Extra storage (10–30% of table)</li>
+          <li>Slows down INSERT/UPDATE/DELETE</li>
+          <li>Maintenance overhead</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q7 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q7">
+  <div class="q-header">
+    <div class="q-number">07</div>
+    <div class="q-title">Explain the difference between SQL and NoSQL databases.</div>
+  </div>
+  <div class="q-body">
+    <p><strong>SQL databases</strong> (relational) store data in structured tables with predefined schemas and enforce ACID transactions. <strong>NoSQL databases</strong> encompass several categories, each optimized for different use cases.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">NoSQL Database Types</div>
+      <div class="mermaid">
+flowchart TB
+  NoSQL["NoSQL Databases"]
+  NoSQL --> Doc["📄 Document Store<br/>MongoDB, CouchDB<br/>Flexible JSON docs"]
+  NoSQL --> KV["🔑 Key-Value Store<br/>Redis, DynamoDB<br/>Simple get/put, ultra fast"]
+  NoSQL --> WC["📊 Wide-Column Store<br/>Cassandra, HBase<br/>Massive distributed data"]
+  NoSQL --> Graph["🔗 Graph Database<br/>Neo4j, Neptune<br/>Relationship queries"]
+  style NoSQL fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style Doc fill:#D1FAE5,stroke:#059669,color:#065F46
+  style KV fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style WC fill:#F5F3FF,stroke:#7C3AED,color:#5B21B6
+  style Graph fill:#FEE2E2,stroke:#DC2626,color:#991B1B
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comp-box comp-blue">
+        <h4>SQL (Relational)</h4>
+        <ul>
+          <li>Fixed schema, structured tables</li>
+          <li>ACID transactions</li>
+          <li>Complex JOIN queries</li>
+          <li>Strong consistency</li>
+          <li><em>e.g., PostgreSQL, MySQL</em></li>
+        </ul>
+      </div>
+      <div class="comp-box comp-purple">
+        <h4>NoSQL (Non-relational)</h4>
+        <ul>
+          <li>Flexible/dynamic schema</li>
+          <li>BASE semantics (eventual consistency)</li>
+          <li>Horizontal scalability</li>
+          <li>Higher write throughput</li>
+          <li><em>e.g., MongoDB, Cassandra</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> Many modern systems are <strong>polyglot</strong>—using SQL for transactional data and NoSQL for high-volume, flexible-schema data. Choose based on data structure, query patterns, consistency requirements, and scale.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q8 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q8">
+  <div class="q-header">
+    <div class="q-number">08</div>
+    <div class="q-title">What is the CAP Theorem?</div>
+  </div>
+  <div class="q-body">
+    <p>The CAP theorem states that a distributed system can provide at most <strong>two out of three</strong> guarantees simultaneously: <strong>C</strong>onsistency, <strong>A</strong>vailability, and <strong>P</strong>artition Tolerance.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">CAP Theorem Triangle</div>
+      <div class="mermaid">
+flowchart TB
+  C["🔒 Consistency<br/>Every read gets<br/>the latest write"]
+  A["✅ Availability<br/>Every request gets<br/>a response"]
+  P["🔗 Partition Tolerance<br/>System works despite<br/>network failures"]
+
+  C --- A
+  A --- P
+  P --- C
+
+  CP["CP Systems<br/>HBase, MongoDB*<br/>Consistent but may<br/>refuse requests"]
+  AP["AP Systems<br/>Cassandra, DynamoDB<br/>Available but may<br/>return stale data"]
+
+  style C fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style A fill:#D1FAE5,stroke:#059669,color:#065F46
+  style P fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style CP fill:#E0E7FF,stroke:#4F46E5,color:#3730A3
+  style AP fill:#ECFDF5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <p>Since <strong>network partitions are inevitable</strong> in distributed systems, the real choice is between <strong>CP</strong> (sacrifice availability during partitions) and <strong>AP</strong> (sacrifice consistency during partitions).</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">CP vs AP During a Network Partition</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Node_A as Node A (Region 1)
+  participant Node_B as Node B (Region 2)
+  
+  Note over Node_A,Node_B: ⚡ Network Partition Occurs!
+  
+  rect rgb(239, 246, 255)
+    Note over Client,Node_B: CP System Response
+    Client->>Node_A: Write x=5
+    Node_A--xNode_B: Can't replicate!
+    Node_A-->>Client: ❌ Error 503 (refuses to serve)
+  end
+  
+  rect rgb(236, 253, 245)
+    Note over Client,Node_B: AP System Response
+    Client->>Node_A: Write x=5
+    Node_A--xNode_B: Can't replicate!
+    Node_A-->>Client: ✅ OK (x=5 locally)
+    Note over Node_B: Node B still has x=3 (stale!)
+  end
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> The PACELC theorem extends CAP — when there's no Partition, you still choose between <strong>Latency and Consistency</strong>. In practice, most systems offer <em>tunable consistency</em> per operation.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q9 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q9">
+  <div class="q-header">
+    <div class="q-number">09</div>
+    <div class="q-title">What is Database Sharding, and what are its challenges?</div>
+  </div>
+  <div class="q-body">
+    <p>Sharding is a horizontal partitioning strategy that splits a large database into smaller pieces called <strong>shards</strong>, each on a separate server. Each shard holds a subset of the data determined by a <strong>shard key</strong>.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Sharding Strategies</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph Range["Range-Based Sharding"]
+    direction LR
+    R1["Shard 1<br/>Users A–F"]
+    R2["Shard 2<br/>Users G–M"]
+    R3["Shard 3<br/>Users N–Z"]
+  end
+  subgraph Hash["Hash-Based Sharding"]
+    direction LR
+    H0["hash(key) % 3 = 0<br/>→ Shard 1"]
+    H1["hash(key) % 3 = 1<br/>→ Shard 2"]
+    H2["hash(key) % 3 = 2<br/>→ Shard 3"]
+  end
+  subgraph Geo["Geographic Sharding"]
+    direction LR
+    G1["🇺🇸 US Shard"]
+    G2["🇪🇺 EU Shard"]
+    G3["🇯🇵 Asia Shard"]
+  end
+
+  style Range fill:#EFF6FF,stroke:#2563EB
+  style Hash fill:#ECFDF5,stroke:#059669
+  style Geo fill:#FEF3C7,stroke:#D97706
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Sharding Architecture</div>
+      <div class="mermaid">
+flowchart LR
+  App["🖥️ Application"]
+  Router["🔀 Shard Router<br/>hash(user_id) % N"]
+  App --> Router
+  Router --> S1["🗄️ Shard 1<br/>Users 0-999K"]
+  Router --> S2["🗄️ Shard 2<br/>Users 1M-1.99M"]
+  Router --> S3["🗄️ Shard 3<br/>Users 2M-2.99M"]
+  
+  style Router fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style S1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style S3 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Challenges:</strong> Cross-shard queries/JOINs are expensive, rebalancing data when adding shards is complex, referential integrity across shards is hard, and operational complexity increases significantly. <em>Exhaust other options (caching, read replicas, query optimization) before sharding.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q10 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q10">
+  <div class="q-header">
+    <div class="q-number">10</div>
+    <div class="q-title">What is an API Gateway, and why is it used?</div>
+  </div>
+  <div class="q-body">
+    <p>An API Gateway is a server that acts as the <strong>single entry point</strong> for all client requests to backend services. It handles cross-cutting concerns so individual services don't have to.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">API Gateway Architecture</div>
+      <div class="mermaid">
+flowchart LR
+  M["📱 Mobile"] --> GW
+  W["🌐 Web"] --> GW
+  I["🤖 IoT"] --> GW
+
+  GW["🚪 API Gateway<br/>Auth · Rate Limit<br/>Routing · Logging"]
+
+  GW --> US["👤 User Service"]
+  GW --> OS["🛒 Order Service"]
+  GW --> PS["💳 Payment Service"]
+  GW --> NS["🔔 Notification Service"]
+
+  style GW fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style US fill:#D1FAE5,stroke:#059669,color:#065F46
+  style OS fill:#D1FAE5,stroke:#059669,color:#065F46
+  style PS fill:#D1FAE5,stroke:#059669,color:#065F46
+  style NS fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">API Gateway Responsibilities</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph GW["API Gateway Functions"]
+    direction TB
+    A["🔐 Authentication &<br/>Authorization"]
+    B["🚦 Rate Limiting &<br/>Throttling"]
+    C["🔀 Request Routing"]
+    D["🔄 Request/Response<br/>Transformation"]
+    E["📊 Logging &<br/>Monitoring"]
+    F["🔒 SSL Termination"]
+    G["💾 Response Caching"]
+    H["⚖️ Load Balancing"]
+  end
+  style GW fill:#EFF6FF,stroke:#2563EB
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Popular gateways:</strong> Kong, AWS API Gateway, Apigee, NGINX. The <strong>Backend for Frontend (BFF)</strong> pattern uses separate gateways optimized for different clients (mobile vs. web vs. IoT).
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q11 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q11">
+  <div class="q-header">
+    <div class="q-number">11</div>
+    <div class="q-title">What are Microservices, and how do they differ from Monolithic architecture?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Monolith vs Microservices</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph Mono["Monolithic Architecture"]
+    direction TB
+    UI1["UI Layer"]
+    BL1["Business Logic"]
+    DA1["Data Access"]
+    DB1["🗄️ Single Database"]
+    UI1 --> BL1 --> DA1 --> DB1
+  end
+  subgraph Micro["Microservices Architecture"]
+    direction TB
+    GW2["API Gateway"]
+    GW2 --> S1["User<br/>Service"]
+    GW2 --> S2["Order<br/>Service"]
+    GW2 --> S3["Payment<br/>Service"]
+    S1 --> D1["🗄️ DB"]
+    S2 --> D2["🗄️ DB"]
+    S3 --> D3["🗄️ DB"]
+  end
+  style Mono fill:#FEF3C7,stroke:#D97706
+  style Micro fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comp-box comp-orange">
+        <h4>Monolithic</h4>
+        <ul>
+          <li>Single deployable unit</li>
+          <li>Shared codebase & database</li>
+          <li>Simple to develop initially</li>
+          <li>Hard to scale specific parts</li>
+          <li>One bug can crash everything</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-green">
+        <h4>Microservices</h4>
+        <ul>
+          <li>Independent deployable services</li>
+          <li>Own database per service</li>
+          <li>Independent scaling & tech stack</li>
+          <li>Fault isolation</li>
+          <li>More operational complexity</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Migration path:</strong> The <strong>Strangler Fig</strong> pattern incrementally extracts services from the monolith. Companies like Amazon, Netflix, and Uber migrated to microservices as they scaled.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q12 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q12">
+  <div class="q-header">
+    <div class="q-number">12</div>
+    <div class="q-title">What is a Message Queue, and when should you use one?</div>
+  </div>
+  <div class="q-body">
+    <p>A message queue enables <strong>asynchronous communication</strong> between producers and consumers by temporarily storing messages. Producers send messages without waiting for consumers to process them.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Message Queue — Point-to-Point</div>
+      <div class="mermaid">
+flowchart LR
+  P1["Producer 1"] --> Q["📬 Message Queue<br/>FIFO Buffer"]
+  P2["Producer 2"] --> Q
+  Q --> C1["Consumer 1"]
+  Q --> C2["Consumer 2"]
+  
+  style Q fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style P1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style P2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style C1 fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style C2 fill:#FEF3C7,stroke:#D97706,color:#92400E
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Publish-Subscribe Pattern</div>
+      <div class="mermaid">
+flowchart LR
+  P["📤 Publisher<br/>Order Service"] --> T["📢 Topic<br/>'order_placed'"]
+  T --> S1["📧 Email Service"]
+  T --> S2["📦 Inventory Service"]
+  T --> S3["📊 Analytics Service"]
+  T --> S4["🔔 Notification Service"]
+
+  style T fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style P fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Popular implementations:</strong> RabbitMQ (complex routing), Apache Kafka (high-throughput streaming), Amazon SQS (managed queue), Redis Streams. Use when you need <strong>decoupling, load leveling, reliability, or ordering guarantees</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q13 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q13">
+  <div class="q-header">
+    <div class="q-number">13</div>
+    <div class="q-title">What is REST, and what makes an API RESTful?</div>
+  </div>
+  <div class="q-body">
+    <p>REST (Representational State Transfer) models <strong>resources</strong> (nouns) and uses <strong>HTTP methods</strong> (verbs) to perform operations on them.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">RESTful API Design</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph Methods["HTTP Methods → CRUD"]
+    direction TB
+    G["GET /users/123<br/>→ Read user"]
+    P["POST /users<br/>→ Create user"]
+    U["PUT /users/123<br/>→ Update user"]
+    D["DELETE /users/123<br/>→ Delete user"]
+    PA["PATCH /users/123<br/>→ Partial update"]
+  end
+  
+  subgraph Principles["REST Principles"]
+    direction TB
+    R1["🔗 Resource-based URIs"]
+    R2["📭 Stateless requests"]
+    R3["📋 Standard HTTP codes"]
+    R4["🔄 Cacheable responses"]
+    R5["📐 Uniform interface"]
+  end
+  
+  style Methods fill:#EFF6FF,stroke:#2563EB
+  style Principles fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">REST Request/Response Flow</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Server
+  Client->>Server: GET /api/v1/users/123
+  Note right of Server: Stateless - no session
+  Server-->>Client: 200 OK + JSON body
+  Client->>Server: POST /api/v1/users (body: {name: "Alice"})
+  Server-->>Client: 201 Created + Location header
+  Client->>Server: DELETE /api/v1/users/456
+  Server-->>Client: 204 No Content
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Best practices:</strong> Use proper status codes (200, 201, 404, 500), support pagination for collections, version your APIs, and return consistent error formats.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q14 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q14">
+  <div class="q-header">
+    <div class="q-number">14</div>
+    <div class="q-title">What is a Reverse Proxy, and how does it differ from a Forward Proxy?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Forward Proxy vs Reverse Proxy</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph FP["Forward Proxy"]
+    direction LR
+    C1["👤 Client"] --> FP1["🔀 Forward<br/>Proxy"] --> INT["🌐 Internet<br/>/ Server"]
+  end
+  subgraph RP["Reverse Proxy"]
+    direction LR
+    INT2["🌐 Internet<br/>/ Client"] --> RP1["🔀 Reverse<br/>Proxy"] --> S1["🖥️ Server"]
+  end
+  
+  style FP fill:#FEF3C7,stroke:#D97706
+  style RP fill:#ECFDF5,stroke:#059669
+  style FP1 fill:#FDE68A,stroke:#D97706,color:#92400E
+  style RP1 fill:#A7F3D0,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comp-box comp-orange">
+        <h4>Forward Proxy (Client-side)</h4>
+        <ul>
+          <li>Hides client identity from server</li>
+          <li>Content filtering & access control</li>
+          <li>Bypass geo-restrictions</li>
+          <li>Client caching</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-green">
+        <h4>Reverse Proxy (Server-side)</h4>
+        <ul>
+          <li>Hides backend server details</li>
+          <li>Load balancing & SSL termination</li>
+          <li>Caching & compression</li>
+          <li>DDoS protection & security</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> NGINX and HAProxy are the most popular reverse proxies. In production, a reverse proxy is typically the <strong>first point of contact</strong> for all incoming traffic.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q15 -->
+<!-- ============================================================ -->
+<div class="question-card" id="q15">
+  <div class="q-header">
+    <div class="q-number">15</div>
+    <div class="q-title">What is Database Replication, and what are the common strategies?</div>
+  </div>
+  <div class="q-body">
+    <p>Database replication copies data from a <strong>primary</strong> (master) to one or more <strong>replicas</strong> (slaves) to improve availability, fault tolerance, and read performance.</p>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Single-Leader Replication</div>
+      <div class="mermaid">
+flowchart TB
+  W["✍️ Writes"] --> Primary["🗄️ Primary<br/>(Leader)"]
+  Primary -->|"Replicate"| R1["🗄️ Replica 1"]
+  Primary -->|"Replicate"| R2["🗄️ Replica 2"]
+  Primary -->|"Replicate"| R3["🗄️ Replica 3"]
+  
+  Read["📖 Reads"] --> R1
+  Read --> R2
+  Read --> R3
+  
+  style Primary fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style R1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style R2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style R3 fill:#D1FAE5,stroke:#059669,color:#065F46
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="diagram-label">Replication Strategies Compared</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph SL["Single-Leader"]
+    direction LR
+    sl1["1 primary writes<br/>N replicas read"]
+    sl2["Simple ✅<br/>Write bottleneck ⚠️"]
+  end
+  subgraph ML["Multi-Leader"]
+    direction LR
+    ml1["Multiple nodes<br/>accept writes"]
+    ml2["Multi-DC ✅<br/>Conflict resolution ⚠️"]
+  end
+  subgraph LL["Leaderless"]
+    direction LR
+    ll1["Any node can<br/>read/write"]
+    ll2["High availability ✅<br/>Quorum needed ⚠️"]
+  end
+  style SL fill:#EFF6FF,stroke:#2563EB
+  style ML fill:#ECFDF5,stroke:#059669
+  style LL fill:#FEF3C7,stroke:#D97706
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> Replication can be <strong>synchronous</strong> (guarantees consistency, adds latency) or <strong>asynchronous</strong> (faster, risks data loss). Async replication lag can cause read-your-write inconsistencies.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q16-30 continue below -->
+<!-- ============================================================ -->
+<div class="question-card" id="q16">
+  <div class="q-header">
+    <div class="q-number">16</div>
+    <div class="q-title">What is a Proxy, and what types of proxies exist in system design?</div>
+  </div>
+  <div class="q-body">
+    <p>A proxy is an intermediary server between a client and a server that adds functionality like security, performance optimization, and anonymity.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Types of Proxies in a Modern Stack</div>
+      <div class="mermaid">
+flowchart TB
+  Client["👤 Client"]
+  Client --> FWD["🔀 Forward Proxy<br/>Corporate network"]
+  FWD --> CDN["📡 CDN / Caching Proxy<br/>Edge delivery"]
+  CDN --> APIGW["🚪 API Gateway / Proxy<br/>Auth, rate limit"]
+  APIGW --> SM["🔗 Service Mesh Sidecar<br/>mTLS, retries"]
+  SM --> DBP["🗄️ DB Proxy<br/>Connection pooling"]
+  DBP --> DB["💾 Database"]
+  
+  style FWD fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style CDN fill:#D1FAE5,stroke:#059669,color:#065F46
+  style APIGW fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style SM fill:#F5F3FF,stroke:#7C3AED,color:#5B21B6
+  style DBP fill:#FEE2E2,stroke:#DC2626,color:#991B1B
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Key Takeaway:</strong> CDNs are globally distributed caching reverse proxies. Service meshes use sidecar proxies (Envoy) for inter-service communication. Database proxies (PgBouncer, ProxySQL) manage connection pooling.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q17">
+  <div class="q-header">
+    <div class="q-number">17</div>
+    <div class="q-title">What is Latency vs. Throughput, and how do they relate?</div>
+  </div>
+  <div class="q-body">
+    <p><strong>Latency</strong> = time for a single request (measured in ms). <strong>Throughput</strong> = number of requests per unit time (measured in RPS). They're related but distinct.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Latency vs Throughput Relationship</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph LowLat["Low Latency, Low Throughput"]
+    direction TB
+    a1["One request at a time<br/>Each completes fast<br/>⏱️ 10ms per request<br/>📊 100 RPS"]
+  end
+  subgraph HighThru["Higher Latency, High Throughput"]
+    direction TB
+    b1["Batch processing<br/>Requests bundled<br/>⏱️ 50ms per batch<br/>📊 10,000 RPS"]
+  end
+  style LowLat fill:#EFF6FF,stroke:#2563EB
+  style HighThru fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+    <table class="latency-table">
+      <tr><th>Operation</th><th>Latency</th></tr>
+      <tr><td>L1 cache reference</td><td><code>~0.5 ns</code></td></tr>
+      <tr><td>RAM access</td><td><code>~100 ns</code></td></tr>
+      <tr><td>SSD random read</td><td><code>~150 μs</code></td></tr>
+      <tr><td>HDD seek</td><td><code>~10 ms</code></td></tr>
+      <tr><td>Same-datacenter round trip</td><td><code>~0.5 ms</code></td></tr>
+      <tr><td>Cross-continent round trip</td><td><code>~150 ms</code></td></tr>
+    </table>
+    <div class="key-point">
+      <strong>In interviews:</strong> Always clarify latency requirements (p50, p95, p99) and throughput expectations. Optimize latency with caching and minimizing hops. Optimize throughput with concurrency, batching, and horizontal scaling.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q18">
+  <div class="q-header">
+    <div class="q-number">18</div>
+    <div class="q-title">What is Consistent Hashing, and why is it used?</div>
+  </div>
+  <div class="q-body">
+    <p>Consistent hashing distributes data across nodes in a way that <strong>minimizes redistribution</strong> when nodes are added or removed. In naive hashing (key % N), changing N causes nearly all keys to remap.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Consistent Hashing Ring</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph Ring["Hash Ring (0 to 2³² - 1)"]
+    direction TB
+    N1["🖥️ Node A<br/>position: 45°"]
+    N2["🖥️ Node B<br/>position: 160°"]
+    N3["🖥️ Node C<br/>position: 270°"]
+    K1["🔑 Key 1 (80°)<br/>→ Node B"]
+    K2["🔑 Key 2 (200°)<br/>→ Node C"]
+    K3["🔑 Key 3 (350°)<br/>→ Node A"]
+  end
+  style Ring fill:#EFF6FF,stroke:#2563EB
+  style N1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style N2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style N3 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style K1 fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style K2 fill:#FEF3C7,stroke:#D97706,color:#92400E
+  style K3 fill:#FEF3C7,stroke:#D97706,color:#92400E
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Naive Hash vs Consistent Hash — Adding a Node</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph Naive["Naive: key % N"]
+    direction TB
+    na1["3 servers → 4 servers"]
+    na2["~75% of keys remap! 💥"]
+  end
+  subgraph CH["Consistent Hashing"]
+    direction TB
+    ch1["3 servers → 4 servers"]
+    ch2["Only ~25% of keys remap ✅"]
+  end
+  style Naive fill:#FEF2F2,stroke:#DC2626
+  style CH fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Used in:</strong> Cassandra, DynamoDB, Memcached, Akamai CDN. <strong>Virtual nodes (vnodes)</strong> solve uneven distribution by placing multiple points per physical node on the ring.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q19">
+  <div class="q-header">
+    <div class="q-number">19</div>
+    <div class="q-title">What is a Single Point of Failure (SPOF), and how do you eliminate it?</div>
+  </div>
+  <div class="q-body">
+    <p>A SPOF is any component whose failure causes the <strong>entire system</strong> to stop working. SPOFs are the enemy of high availability.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Before: System with SPOFs</div>
+      <div class="mermaid">
+flowchart LR
+  C["👤 Clients"] --> LB["⚖️ Single LB ⚠️"]
+  LB --> S["🖥️ Single Server ⚠️"]
+  S --> DB["🗄️ Single DB ⚠️"]
+  style LB fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+  style S fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+  style DB fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">After: Redundancy Eliminates SPOFs</div>
+      <div class="mermaid">
+flowchart LR
+  C["👤 Clients"] --> LB1["⚖️ LB Active"]
+  C --> LB2["⚖️ LB Standby"]
+  LB1 --> S1["🖥️ Server 1"]
+  LB1 --> S2["🖥️ Server 2"]
+  LB1 --> S3["🖥️ Server 3"]
+  S1 --> Primary["🗄️ DB Primary"]
+  S2 --> Primary
+  S3 --> Primary
+  Primary --> Rep1["🗄️ DB Replica 1"]
+  Primary --> Rep2["🗄️ DB Replica 2"]
+  style LB1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style LB2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style Primary fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style Rep1 fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style Rep2 fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Principle:</strong> "N+1 redundancy" — always have at least one more instance than you need. For critical systems, use "N+2" to handle both a failure <em>and</em> a maintenance event simultaneously.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q20">
+  <div class="q-header">
+    <div class="q-number">20</div>
+    <div class="q-title">What is the difference between TCP and UDP?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">TCP Connection — Three-Way Handshake</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Server
+  Client->>Server: SYN
+  Server->>Client: SYN-ACK
+  Client->>Server: ACK
+  Note over Client,Server: Connection Established ✅
+  Client->>Server: Data packet 1
+  Server->>Client: ACK 1
+  Client->>Server: Data packet 2
+  Server->>Client: ACK 2
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">UDP — No Handshake, Fire and Forget</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Server
+  Client->>Server: Data packet 1
+  Client->>Server: Data packet 2
+  Client->>Server: Data packet 3
+  Note over Client,Server: No acknowledgment!<br/>Packets may arrive out of order<br/>or not at all 🔥
+      </div>
+    </div>
+    <div class="comparison-grid">
+      <div class="comp-box comp-blue">
+        <h4>TCP — Reliable</h4>
+        <ul>
+          <li>Connection-oriented (handshake)</li>
+          <li>Guaranteed ordered delivery</li>
+          <li>Retransmits lost packets</li>
+          <li><em>Web, email, file transfer, DB</em></li>
+        </ul>
+      </div>
+      <div class="comp-box comp-purple">
+        <h4>UDP — Fast</h4>
+        <ul>
+          <li>Connectionless (no handshake)</li>
+          <li>No delivery guarantee</li>
+          <li>Lower latency & overhead</li>
+          <li><em>Video streaming, gaming, VoIP, DNS</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q21">
+  <div class="q-header">
+    <div class="q-number">21</div>
+    <div class="q-title">What is DNS, and how does it work?</div>
+  </div>
+  <div class="q-body">
+    <p>DNS translates human-readable domain names (google.com) into IP addresses (142.250.80.46). It's the "phonebook of the internet."</p>
+    <div class="diagram-box">
+      <div class="diagram-label">DNS Resolution Flow</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Browser
+  participant Resolver as Recursive Resolver<br/>(ISP DNS)
+  participant Root as Root Nameserver
+  participant TLD as TLD Nameserver<br/>(.com)
+  participant Auth as Authoritative NS<br/>(google.com)
+  
+  Browser->>Resolver: What is google.com?
+  Resolver->>Root: Where is .com?
+  Root-->>Resolver: Ask TLD server at x.x.x.x
+  Resolver->>TLD: Where is google.com?
+  TLD-->>Resolver: Ask authoritative NS at y.y.y.y
+  Resolver->>Auth: What is google.com?
+  Auth-->>Resolver: 142.250.80.46 (TTL: 300s)
+  Resolver-->>Browser: 142.250.80.46
+  Note over Browser,Auth: Result cached at each level based on TTL
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Common DNS Record Types</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph Records["DNS Record Types"]
+    direction TB
+    A["A Record<br/>domain → IPv4"]
+    AAAA["AAAA Record<br/>domain → IPv6"]
+    CNAME["CNAME Record<br/>alias → domain"]
+    MX["MX Record<br/>domain → mail server"]
+    NS["NS Record<br/>domain → nameserver"]
+  end
+  style Records fill:#EFF6FF,stroke:#2563EB
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>In system design:</strong> DNS enables load balancing (DNS round robin, geographic routing), failover (low TTL for quick switchover), and CDN routing (directing users to nearest edge).
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q22">
+  <div class="q-header">
+    <div class="q-number">22</div>
+    <div class="q-title">What is a WebSocket, and when would you use it over HTTP?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">HTTP vs WebSocket Communication</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Server
+  
+  rect rgb(239, 246, 255)
+    Note over Client,Server: HTTP — Request/Response (Half-duplex)
+    Client->>Server: HTTP Request
+    Server-->>Client: HTTP Response
+    Client->>Server: HTTP Request
+    Server-->>Client: HTTP Response
+    Note over Client,Server: Client always initiates
+  end
+
+  rect rgb(236, 253, 245)
+    Note over Client,Server: WebSocket — Full-duplex
+    Client->>Server: HTTP Upgrade Request
+    Server-->>Client: 101 Switching Protocols
+    Note over Client,Server: Persistent connection open 🔗
+    Client->>Server: Message
+    Server->>Client: Message
+    Server->>Client: Push update!
+    Client->>Server: Message
+    Server->>Client: Push update!
+  end
+      </div>
+    </div>
+    <div class="comparison-grid">
+      <div class="comp-box comp-blue">
+        <h4>Use HTTP When</h4>
+        <ul>
+          <li>Standard request-response</li>
+          <li>Infrequent updates</li>
+          <li>Caching is important</li>
+          <li>Simple CRUD operations</li>
+        </ul>
+      </div>
+      <div class="comp-box comp-green">
+        <h4>Use WebSocket When</h4>
+        <ul>
+          <li>Real-time chat</li>
+          <li>Live sports/stock tickers</li>
+          <li>Collaborative editing</li>
+          <li>Multiplayer games</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q23">
+  <div class="q-header">
+    <div class="q-number">23</div>
+    <div class="q-title">What is Data Partitioning, and what strategies exist?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Horizontal vs Vertical Partitioning</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph HP["Horizontal Partitioning (Sharding)"]
+    direction LR
+    h1["Partition 1<br/>Rows 1-1000"]
+    h2["Partition 2<br/>Rows 1001-2000"]
+    h3["Partition 3<br/>Rows 2001-3000"]
+  end
+  subgraph VP["Vertical Partitioning"]
+    direction LR
+    v1["Partition A<br/>id, name, email<br/>(hot columns)"]
+    v2["Partition B<br/>id, bio, avatar<br/>(cold columns)"]
+  end
+  style HP fill:#ECFDF5,stroke:#059669
+  style VP fill:#EFF6FF,stroke:#2563EB
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Partitioning Strategies</div>
+      <div class="mermaid">
+flowchart LR
+  subgraph Range["Range Partitioning"]
+    r1["Jan-Mar → P1"]
+    r2["Apr-Jun → P2"]
+    r3["Jul-Sep → P3"]
+  end
+  subgraph Hash["Hash Partitioning"]
+    h1["hash(id) % 4 → P(n)"]
+    h2["Even distribution ✅"]
+  end
+  subgraph List["List Partitioning"]
+    l1["US,CA → P1"]
+    l2["UK,DE → P2"]
+    l3["JP,KR → P3"]
+  end
+  style Range fill:#FEF3C7,stroke:#D97706
+  style Hash fill:#ECFDF5,stroke:#059669
+  style List fill:#F5F3FF,stroke:#7C3AED
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Key considerations:</strong> Choose partition key with high cardinality and even distribution that matches query patterns. Cross-partition queries are expensive. Consider functional partitioning for different data domains.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q24">
+  <div class="q-header">
+    <div class="q-number">24</div>
+    <div class="q-title">What is a Rate Limiter, and how would you design one?</div>
+  </div>
+  <div class="q-body">
+    <p>A rate limiter controls the rate of requests a client can make within a time window, protecting services from abuse and ensuring fair usage.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Token Bucket Algorithm</div>
+      <div class="mermaid">
+flowchart TB
+  Refill["⏰ Token Refill<br/>Add 10 tokens/sec"]
+  Bucket["🪣 Token Bucket<br/>Capacity: 50 tokens"]
+  Refill --> Bucket
+  
+  R1["Request 1 ✅<br/>Consume 1 token"] --> Bucket
+  R2["Request 2 ✅<br/>Consume 1 token"] --> Bucket
+  R3["Request N ❌<br/>No tokens left!<br/>→ HTTP 429"] --> Bucket
+
+  style Bucket fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style R1 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style R2 fill:#D1FAE5,stroke:#059669,color:#065F46
+  style R3 fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Rate Limiting Algorithms Compared</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph TB2["Token Bucket"]
+    tb1["Allows bursts ⚡<br/>Tokens refill at fixed rate"]
+  end
+  subgraph LB["Leaky Bucket"]
+    lb1["Smooth output 🌊<br/>Requests processed at fixed rate"]
+  end
+  subgraph FW["Fixed Window"]
+    fw1["Simple counter 🔢<br/>Edge case: 2x rate at boundary"]
+  end
+  subgraph SW["Sliding Window"]
+    sw1["Accurate 🎯<br/>Best balance of all"]
+  end
+  style TB2 fill:#ECFDF5,stroke:#059669
+  style LB fill:#EFF6FF,stroke:#2563EB
+  style FW fill:#FEF3C7,stroke:#D97706
+  style SW fill:#F5F3FF,stroke:#7C3AED
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>In distributed systems:</strong> Use Redis for shared counters across servers. Return HTTP 429 with Retry-After header. Use Lua scripts for atomic check-and-increment.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q25">
+  <div class="q-header">
+    <div class="q-number">25</div>
+    <div class="q-title">What are ACID properties in databases?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">ACID Properties Illustrated</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph A["🔄 Atomicity"]
+    a1["All or nothing<br/>Transfer: Debit AND Credit<br/>or NEITHER"]
+  end
+  subgraph C["✅ Consistency"]
+    c1["Valid state → Valid state<br/>All constraints maintained"]
+  end
+  subgraph I["🔒 Isolation"]
+    i1["Concurrent transactions<br/>don't interfere"]
+  end
+  subgraph D["💾 Durability"]
+    d1["Committed = permanent<br/>Survives crashes (WAL)"]
+  end
+  style A fill:#DBEAFE,stroke:#2563EB
+  style C fill:#ECFDF5,stroke:#059669
+  style I fill:#FEF3C7,stroke:#D97706
+  style D fill:#F5F3FF,stroke:#7C3AED
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Bank Transfer — Atomicity Example</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant App as Application
+  participant DB as Database
+  App->>DB: BEGIN TRANSACTION
+  App->>DB: UPDATE accounts SET balance = balance - 100 WHERE id = 'Alice'
+  App->>DB: UPDATE accounts SET balance = balance + 100 WHERE id = 'Bob'
+  alt Everything succeeds
+    App->>DB: COMMIT ✅
+    Note over DB: Both changes saved
+  else Any step fails
+    App->>DB: ROLLBACK ❌
+    Note over DB: Neither change saved
+  end
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>ACID vs BASE:</strong> SQL databases enforce ACID. NoSQL databases often use BASE (Basically Available, Soft state, Eventually consistent) for better performance and scalability.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q26">
+  <div class="q-header">
+    <div class="q-number">26</div>
+    <div class="q-title">What is the difference between Synchronous and Asynchronous communication?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Synchronous vs Asynchronous</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant ServiceA as Service A
+  participant ServiceB as Service B
+  
+  rect rgb(254, 243, 199)
+    Note over Client,ServiceB: SYNCHRONOUS — Blocking
+    Client->>ServiceA: Request
+    ServiceA->>ServiceB: Call (waits... ⏳)
+    ServiceB-->>ServiceA: Response
+    ServiceA-->>Client: Response
+    Note over Client: Total wait = A + B time
+  end
+  
+  rect rgb(236, 253, 245)
+    Note over Client,ServiceB: ASYNCHRONOUS — Non-blocking
+    Client->>ServiceA: Request
+    ServiceA-->>Client: ✅ Accepted (202)
+    ServiceA-)ServiceB: Message via Queue
+    Note over Client: Client free immediately!
+    ServiceB--)ServiceA: Processes later
+  end
+      </div>
+    </div>
+    <div class="comparison-grid">
+      <div class="comp-box comp-orange">
+        <h4>Synchronous</h4>
+        <ul>
+          <li>Simple, intuitive flow</li>
+          <li>Immediate results</li>
+          <li>Tight coupling (sender waits)</li>
+          <li><em>User login, read queries</em></li>
+        </ul>
+      </div>
+      <div class="comp-box comp-green">
+        <h4>Asynchronous</h4>
+        <ul>
+          <li>Better fault tolerance</li>
+          <li>Higher throughput</li>
+          <li>Complex (retries, idempotency)</li>
+          <li><em>Emails, payments, data pipelines</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q27">
+  <div class="q-header">
+    <div class="q-number">27</div>
+    <div class="q-title">What is a Blob Store, and when would you use one?</div>
+  </div>
+  <div class="q-body">
+    <p>A blob store is optimized for storing large, unstructured binary data — images, videos, documents, backups. Unlike databases, they're designed for high-volume storage of opaque data.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Blob Store Architecture Pattern</div>
+      <div class="mermaid">
+flowchart LR
+  App["🖥️ Application"]
+  App -->|"1. Store metadata"| DB["🗄️ Database<br/>file_name, size<br/>content_type<br/>blob_url"]
+  App -->|"2. Upload binary"| Blob["☁️ Blob Store<br/>(S3/GCS/Azure)<br/>Actual files"]
+  Blob -->|"3. Serve via"| CDN["📡 CDN"]
+  CDN --> User["👤 User"]
+  
+  style DB fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+  style Blob fill:#D1FAE5,stroke:#059669,color:#065F46
+  style CDN fill:#FEF3C7,stroke:#D97706,color:#92400E
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Key features:</strong> Virtually unlimited storage, 99.999999999% (11 nines) durability, storage tiers (hot/warm/cold/archive), versioning, and signed URLs for access control. <strong>Store metadata in DB, binary content in blob store.</strong>
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q28">
+  <div class="q-header">
+    <div class="q-number">28</div>
+    <div class="q-title">What is the difference between a Process and a Thread?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Process vs Thread Memory Model</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph P1["Process 1"]
+    direction TB
+    M1["Own Memory Space 📦"]
+    T1a["Thread A"]
+    T1b["Thread B"]
+    SM1["Shared Memory<br/>within process"]
+    T1a --> SM1
+    T1b --> SM1
+  end
+  subgraph P2["Process 2"]
+    direction TB
+    M2["Own Memory Space 📦"]
+    T2a["Thread C"]
+    T2b["Thread D"]
+    SM2["Shared Memory<br/>within process"]
+    T2a --> SM2
+    T2b --> SM2
+  end
+  P1 -.-|"🔒 Isolated!<br/>IPC required"| P2
+  style P1 fill:#DBEAFE,stroke:#2563EB
+  style P2 fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+    <div class="comparison-grid">
+      <div class="comp-box comp-blue">
+        <h4>Processes</h4>
+        <ul>
+          <li>Independent memory space</li>
+          <li>Crash isolation (one doesn't affect others)</li>
+          <li>IPC is expensive (pipes, sockets)</li>
+          <li><em>NGINX worker processes</em></li>
+        </ul>
+      </div>
+      <div class="comp-box comp-purple">
+        <h4>Threads</h4>
+        <ul>
+          <li>Shared memory space</li>
+          <li>Lightweight, fast communication</li>
+          <li>Risk: race conditions, deadlocks</li>
+          <li><em>Java app server threads</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q29">
+  <div class="q-header">
+    <div class="q-number">29</div>
+    <div class="q-title">What is an Idempotent Operation, and why does it matter in distributed systems?</div>
+  </div>
+  <div class="q-body">
+    <p>An idempotent operation produces the <strong>same result</strong> whether executed once or multiple times. This is critical in distributed systems where retries and duplicate messages are common.</p>
+    <div class="diagram-box">
+      <div class="diagram-label">Why Idempotency Matters — Payment Example</div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Client
+  participant Server
+  participant DB as Payment DB
+  
+  rect rgb(254, 242, 242)
+    Note over Client,DB: ❌ WITHOUT Idempotency
+    Client->>Server: Pay $100 (key: abc123)
+    Server->>DB: Charge $100
+    Server--xClient: Response lost! (timeout)
+    Client->>Server: Retry: Pay $100
+    Server->>DB: Charge $100 AGAIN! 💥
+    Note over DB: Customer charged $200!
+  end
+  
+  rect rgb(236, 253, 245)
+    Note over Client,DB: ✅ WITH Idempotency Key
+    Client->>Server: Pay $100 (key: abc123)
+    Server->>DB: Charge $100 + store key abc123
+    Server--xClient: Response lost! (timeout)
+    Client->>Server: Retry: Pay $100 (key: abc123)
+    Server->>DB: Key abc123 exists → return previous result
+    Server-->>Client: ✅ Same response (charged only once)
+  end
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>HTTP idempotency:</strong> GET, PUT, DELETE are defined as idempotent. POST is not. In system design interviews, mentioning idempotency for payment or order systems demonstrates mature distributed systems thinking.
+    </div>
+  </div>
+</div>
+
+<div class="question-card" id="q30">
+  <div class="q-header">
+    <div class="q-number">30</div>
+    <div class="q-title">What is a Data Lake vs. a Data Warehouse?</div>
+  </div>
+  <div class="q-body">
+    <div class="diagram-box">
+      <div class="diagram-label">Data Warehouse vs Data Lake Architecture</div>
+      <div class="mermaid">
+flowchart TB
+  subgraph DW["Data Warehouse"]
+    direction TB
+    dw1["Structured Data Only"]
+    dw2["Schema-on-Write<br/>(ETL: Extract → Transform → Load)"]
+    dw3["Optimized for SQL queries<br/>BI Dashboards"]
+    dw4["Snowflake, Redshift, BigQuery"]
+  end
+  subgraph DL["Data Lake"]
+    direction TB
+    dl1["All Data Types<br/>Structured + Unstructured"]
+    dl2["Schema-on-Read<br/>(ELT: Extract → Load → Transform)"]
+    dl3["ML, exploration,<br/>raw storage"]
+    dl4["S3 + Athena, Delta Lake"]
+  end
+  style DW fill:#EFF6FF,stroke:#2563EB
+  style DL fill:#ECFDF5,stroke:#059669
+      </div>
+    </div>
+    <div class="diagram-box">
+      <div class="diagram-label">Modern Lakehouse Architecture</div>
+      <div class="mermaid">
+flowchart LR
+  Sources["📊 Data Sources<br/>APIs, DBs, Logs<br/>IoT, Files"]
+  Sources --> Lake["🏞️ Data Lake<br/>(Raw Storage)<br/>S3 / GCS"]
+  Lake --> LH["🏠 Lakehouse Layer<br/>Delta Lake / Iceberg<br/>ACID + Schema"]
+  LH --> SQL["📈 SQL Analytics<br/>BI Dashboards"]
+  LH --> ML["🤖 ML Training<br/>Feature Store"]
+  
+  style Lake fill:#D1FAE5,stroke:#059669,color:#065F46
+  style LH fill:#DBEAFE,stroke:#2563EB,color:#1E40AF
+      </div>
+    </div>
+    <div class="key-point">
+      <strong>Modern approach:</strong> The <strong>lakehouse</strong> pattern (Databricks Delta Lake, Apache Iceberg) combines data lake flexibility with data warehouse management features — getting the best of both worlds.
+    </div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    fontFamily: 'DM Sans, sans-serif',
+    fontSize: 13,
+    flowchart: { curve: 'basis', padding: 16, nodeSpacing: 30, rankSpacing: 40 },
+    sequence: { actorMargin: 30, messageMargin: 30, mirrorActors: false }
+  });
+</script>
+</body>
+</html>
